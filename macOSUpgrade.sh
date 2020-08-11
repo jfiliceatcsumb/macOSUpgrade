@@ -141,12 +141,13 @@ title="$macOSname Upgrade"
 heading="Please wait as we prepare your computer for $macOSname..."
 
 ## Title to be used for userDialog
-description="Your computer will reboot in 5-10 minutes and begin the upgrade.
-This process will take approximately 30-40 minutes."
+description="Your computer will reboot soon and begin the upgrade.
+This process should take approximately 1 to 2 hours to complete, during which it will restart several times. 
+You will not be able to use the Mac while the upgrade is taking place."
 
 ## Description to be used prior to downloading the OS installer
-dldescription="We need to download $macOSname to your computer, this will \
-take several minutes."
+dldescription="We need to download $macOSname to your computer. \
+This will take several minutes; do not use the computer."
 
 ## Jamf Helper HUD Position if macOS Installer needs to be downloaded
 ## Options: ul (Upper Left); ll (Lower Left); ur (Upper Right); lr (Lower Right)
@@ -230,7 +231,8 @@ downloadInstaller() {
     ## Capture PID for Jamf Helper HUD
     jamfHUDPID=$!
     ## Run policy to cache installer
-    /usr/local/jamf/bin/jamf policy -event "$download_trigger"
+    # 2020/03/13: jfilice@csumb.edu added -forceNoRecon
+    /usr/local/jamf/bin/jamf policy -event "$download_trigger" -forceNoRecon
     ## Kill Jamf Helper HUD post download
     kill_process "$jamfHUDPID"
 }
@@ -540,6 +542,10 @@ if [ "$eraseInstall" -eq 1 ]; then
     startosinstallOptions+=("--eraseinstall")
     /bin/echo "Script is configured for Erase and Install of macOS."
 fi
+
+### Need to kill the Self Service app. The task description screen will actually prevent Self Service from closing and prevent the restart...
+/usr/bin/killall "Self Service"
+
 
 ## Begin Upgrade
 startosinstallCommand="\"$OSInstaller/Contents/Resources/startosinstall\" ${startosinstallOptions[*]} >> $osinstallLogfile 2>&1 &"
