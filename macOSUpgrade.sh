@@ -405,7 +405,7 @@ fi
 ## Wait until /var/db/.AppleUpgrade disappears
 while [ -e /var/db/.AppleUpgrade ];
 do
-	echo "\$(date "+%a %h %d %H:%M:%S"): Waiting for /var/db/.AppleUpgrade to disappear." >> /usr/local/jamfps/firstbootupgrade.log
+	echo "\$(date "+%a %h %d %H:%M:%S"): Waiting for /var/db/.AppleUpgrade to disappear." | tee -a /var/log/jamf.log >> /usr/local/jamfps/firstbootupgrade.log
     sleep 60
 done
     
@@ -413,7 +413,7 @@ done
 INSTALLER_PROGRESS_PROCESS=\$(pgrep -l "Installer Progress")
 until [ "\$INSTALLER_PROGRESS_PROCESS" = "" ];
 do
-	echo "\$(date "+%a %h %d %H:%M:%S"): Waiting for Installer Progress to complete." >> /usr/local/jamfps/firstbootupgrade.log
+	echo "\$(date "+%a %h %d %H:%M:%S"): Waiting for Installer Progress to complete." | tee -a /var/log/jamf.log >> /usr/local/jamfps/firstbootupgrade.log
     sleep 60
     INSTALLER_PROGRESS_PROCESS=\$(pgrep -l "Installer Progress")
 done
@@ -546,6 +546,8 @@ fi
 ### Need to kill the Self Service app. The task description screen will actually prevent Self Service from closing and prevent the restart...
 /usr/bin/killall "Self Service"
 
+### Echo $osinstallLogfile to jamf.log to keep track of logging in one place.
+/usr/bin/tail -Fn 1 "$osinstallLogfile" >> /var/log/jamf.log &
 
 ## Begin Upgrade
 startosinstallCommand="\"$OSInstaller/Contents/Resources/startosinstall\" ${startosinstallOptions[*]} >> $osinstallLogfile 2>&1 &"
