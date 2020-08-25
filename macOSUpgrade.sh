@@ -546,8 +546,12 @@ fi
 ### Need to kill the Self Service app. The task description screen will actually prevent Self Service from closing and prevent the restart...
 /usr/bin/killall "Self Service"
 
+# 
 ### Echo $osinstallLogfile to jamf.log to keep track of logging in one place.
-/usr/bin/tail -Fn 1 "$osinstallLogfile" >> /var/log/jamf.log &
+# /usr/bin/touch -a "$osinstallLogfile"
+# sleep
+# /usr/bin/tail -Fn 1 "$osinstallLogfile" >> /var/log/jamf.log &
+# 
 
 ## Begin Upgrade
 startosinstallCommand="\"$OSInstaller/Contents/Resources/startosinstall\" ${startosinstallOptions[*]} >> $osinstallLogfile 2>&1 &"
