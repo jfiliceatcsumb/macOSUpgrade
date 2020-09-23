@@ -141,13 +141,14 @@ title="$macOSname Upgrade"
 heading="Please wait as we prepare your computer for $macOSname..."
 
 ## Title to be used for userDialog
-description="Your computer will reboot soon and begin the upgrade.
-This process should take approximately 1 to 2 hours to complete, during which it will restart several times. 
+description="Your computer should reboot in 5-10 minutes and begin the upgrade.
+This process should normally take approximately 30-40 minutes to complete, 
+(but could take up to 2 hours) during which it will restart several times. 
 You will not be able to use the Mac while the upgrade is taking place."
 
 ## Description to be used prior to downloading the OS installer
-dldescription="We need to download $macOSname to your computer. \
-This will take several minutes; do not use the computer."
+dldescription="We need to download $macOSname to your computer; this will \
+take several minutes."
 
 ## Jamf Helper HUD Position if macOS Installer needs to be downloaded
 ## Options: ul (Upper Left); ll (Lower Left); ur (Upper Right); lr (Lower Right)
@@ -231,8 +232,7 @@ downloadInstaller() {
     ## Capture PID for Jamf Helper HUD
     jamfHUDPID=$!
     ## Run policy to cache installer
-    # 2020/03/13: jfilice@csumb.edu added -forceNoRecon
-    /usr/local/jamf/bin/jamf policy -event "$download_trigger" -forceNoRecon
+    /usr/local/jamf/bin/jamf policy -event "$download_trigger"
     ## Kill Jamf Helper HUD post download
     kill_process "$jamfHUDPID"
 }
@@ -344,9 +344,7 @@ validate_free_space "$installerVersionMajor" "$OSInstaller"
 if [[ "${#sysRequirementErrors[@]}" -ge 1 ]]; then
     /bin/echo "Launching jamfHelper Dialog (Requirements Not Met)..."
     /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -windowType utility -title "$title" -icon "$errorIcon" -heading "Requirements Not Met" -description "We were unable to prepare your computer for $macOSname. Please ensure your computer meets the following requirements:
-
 $( /usr/bin/printf '\t• %s\n' "${sysRequirementErrors[@]}" )
-
 If you continue to experience this issue, please contact the IT Support Center." -iconSize 100 -button1 "OK" -defaultButton 1
 
     cleanExit 1
@@ -400,8 +398,6 @@ fi
 /bin/cat << EOF > "$finishOSInstallScriptFilePath"
 #!/bin/bash
 ## First Run Script to remove the installer.
-
-
 ## Wait until /var/db/.AppleUpgrade disappears
 while [ -e /var/db/.AppleUpgrade ];
 do
