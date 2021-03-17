@@ -564,6 +564,10 @@ fi
 # APPLICATION
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# https://github.com/Hambeard/macOSUpgrade/commit/98a1fc0f38a91537649871b34a6e6f8d0565e305
+# Enabling job control to ensure all following processes run in a separate process group
+set -m
+ 
 ## Launch jamfHelper
 jamfHelperPID=""
 if [ "$userDialog" -eq 0 ]; then
@@ -631,5 +635,9 @@ eval "$startosinstallCommand"
 if [ "$ShowLogFile" = "yes" ]; then
     launchctl asuser "$( id -u "$3" )" /usr/bin/open "${osinstallLogfile}"
 fi
+
+# https://github.com/Hambeard/macOSUpgrade/commit/98a1fc0f38a91537649871b34a6e6f8d0565e305
+# Disabling job control
+set +m
 
 exit 0
