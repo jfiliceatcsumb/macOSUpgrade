@@ -155,7 +155,8 @@ This process should normally take up to an hour to complete,
 (but could take up to 2 hours on slow Macs) during which it will restart several times. 
 You will not be able to use the Mac while the upgrade is taking place."
 
-if [ "$eraseInstall" -eq 1 ]; then
+if [ "$eraseInstall" -eq 1 ]; 
+then
 description="Your computer should reboot in 5-10 minutes and begin the erase and install.
 This process should normally take up to an hour to complete, 
 (but could take up to 2 hours on slow Macs) during which it will restart several times. 
