@@ -142,14 +142,26 @@ macOSname=$(/bin/echo "$OSInstaller" | /usr/bin/sed -E 's/(.+)?Install(.+)\.app\
 ## Title to be used for userDialog (only applies to Utility Window)
 title="$macOSname Upgrade"
 
+if [ "$eraseInstall" -eq 1 ]; then
+	title="$macOSname Erase & Install"
+fi
+
 ## Heading to be used for userDialog
 heading="Please wait as we prepare your computer for $macOSname..."
 
-## Title to be used for userDialog
+## Description to be used for userDialog
 description="Your computer should reboot in 5-10 minutes and begin the upgrade.
 This process should normally take up to an hour to complete, 
 (but could take up to 2 hours on slow Macs) during which it will restart several times. 
 You will not be able to use the Mac while the upgrade is taking place."
+
+if [ "$eraseInstall" -eq 1 ]; then
+description="Your computer should reboot in 5-10 minutes and begin the erase and install.
+This process should normally take up to an hour to complete, 
+(but could take up to 2 hours on slow Macs) during which it will restart several times. 
+You will not be able to use the Mac while the upgrade is taking place."
+fi
+
 
 ## Description to be used prior to downloading the OS installer
 dldescription="We need to download $macOSname to your computer; this will \
@@ -597,11 +609,14 @@ if [ "$fvStatus" = "FileVault is On." ] && \
     /bin/launchctl bootstrap gui/"${userID}" /Library/LaunchAgents/com.apple.install.osinstallersetupd.plist
 fi
 
+# https://grahamrpugh.com/2020/06/09/startosinstall-undocumented-options.html
+# 
 ## Set required startosinstall options
 startosinstallOptions+=(
 "--agreetolicense"
 "--nointeraction"
 "--pidtosignal $jamfHelperPID"
+"--allowremoval"
 )
 
 ## Set version specific startosinstall options
